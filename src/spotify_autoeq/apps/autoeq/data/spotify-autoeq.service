@@ -1,0 +1,18 @@
+[Unit]
+Description=Switch the PulseEffects equalizer by the genre of the Spotify track
+After=graphical-session.target pulseaudio.service
+PartOf=graphical-session.target
+ConditionEnvironment=DISPLAY
+
+[Service]
+Type=simple
+ExecStart=@EXEC_START@
+# Restores the original audio path (streams go straight to the output sink).
+ExecStopPost=-/usr/bin/env pulseeffects --quit
+Restart=on-failure
+RestartSec=3
+KillSignal=SIGTERM
+TimeoutStopSec=15
+
+[Install]
+WantedBy=graphical-session.target
