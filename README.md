@@ -172,6 +172,16 @@ spotify-autoeq --version
 `SIGHUP` reloads the
 configuration without a restart; `SIGTERM` or `Ctrl+C` shuts down cleanly.
 
+## Status file and panel indicator
+
+While running, the program writes its state (current track, genres, applied
+profile, backend health) to `$XDG_RUNTIME_DIR/spotify-autoeq/status.json`. It
+is meant for front ends such as the GNOME Shell panel indicator
+[spotify-autoeq-gnome](https://github.com/hllerden/spotify-autoeq-gnome), and
+works fine with plain `cat` too. The format is documented in
+[docs/status-file.md](https://github.com/hllerden/spotify-autoeq/blob/main/docs/status-file.md).
+Set `status.enabled: false` to turn it off.
+
 ## Configuration
 
 Optional file: `~/.config/spotify-autoeq/config.yaml`
@@ -188,6 +198,7 @@ Optional file: `~/.config/spotify-autoeq/config.yaml`
 | `resolver.positive_ttl_days` / `negative_ttl_days` | `30` / `1` | Cache lifetime of found / not found results |
 | `mapper.default_profile` | `Flat` | Used when no genre matches |
 | `mapper.overrides` | none | `"artist"` or `"artist - title"` mapped to a profile |
+| `status.enabled` | `true` | Write the status file for front ends |
 
 Example override:
 

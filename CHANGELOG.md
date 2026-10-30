@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.0 - 2026-10-30
+
+- Status file `$XDG_RUNTIME_DIR/spotify-autoeq/status.json` for panel
+  indicators and scripts: current track, playback (playing, paused, idle,
+  advertisement), genres and their source, applied profile with its band
+  gains, and backend health. Documented in `docs/status-file.md`; disable with
+  `status.enabled: false`.
+- The genre cache remembers which provider supplied each entry; databases
+  written by 1.0 are migrated automatically.
+- Pause and resume are now reported to the status file (they still never
+  trigger a lookup or an equalizer change).
+
 ## 1.0.0 - 2026-10-30
 
 First release.

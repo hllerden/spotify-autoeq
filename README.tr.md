@@ -174,6 +174,15 @@ spotify-autoeq --version
 `SIGHUP`
 ayarı yeniden başlatmadan yükler; `SIGTERM` veya `Ctrl+C` temiz kapatır.
 
+## Durum dosyası ve panel göstergesi
+
+Çalışırken program durumunu (şarkı, türler, uygulanan profil, arka uç sağlığı)
+`$XDG_RUNTIME_DIR/spotify-autoeq/status.json` dosyasına yazar. GNOME Shell panel
+göstergesi [spotify-autoeq-gnome](https://github.com/hllerden/spotify-autoeq-gnome)
+gibi arayüzler için tasarlandı, düz `cat` ile de okunabilir. Biçim
+[docs/status-file.md](https://github.com/hllerden/spotify-autoeq/blob/main/docs/status-file.md)
+dosyasında belgelidir. Kapatmak için `status.enabled: false` yazın.
+
 ## Ayarlar
 
 İsteğe bağlı dosya: `~/.config/spotify-autoeq/config.yaml`
@@ -190,6 +199,7 @@ ayarı yeniden başlatmadan yükler; `SIGTERM` veya `Ctrl+C` temiz kapatır.
 | `resolver.positive_ttl_days` / `negative_ttl_days` | `30` / `1` | Bulunan / bulunamayan sonuçların önbellek ömrü |
 | `mapper.default_profile` | `Flat` | Hiçbir tür eşleşmezse kullanılır |
 | `mapper.overrides` | yok | `"sanatçı"` veya `"sanatçı - şarkı"` için sabit profil |
+| `status.enabled` | `true` | Arayüzler için durum dosyasını yaz |
 
 Örnek:
 
