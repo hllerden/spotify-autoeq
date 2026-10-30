@@ -142,3 +142,21 @@ def test_shutdown_service_runs_quit_and_rearms():
     assert state["calls"] == [["pulseeffects", "--quit"]]
     backend.apply(builtin_profiles()["Rock"])
     assert [x.value for b in s.batches for x in b if x.key == "state"] == [False, True, False, True]
+
+
+def test_last_error_tracks_failures_and_recovery():
+    b = FakeBackend(BackendError("down"))
+    c = EqController(b, builtin_profiles())
+    assert c.last_error is None
+    c.set_profile("Rock")
+    assert c.last_error == "down"
+    b.error = RuntimeError("bug")
+    c.set_profile("Rock")
+    assert c.last_error == "RuntimeError: bug"
+    b.error = None
+    assert c.set_profile("Rock") is True and c.last_error is None
+
+
+def test_gains_of_known_and_unknown_profiles():
+    c = EqController(FakeBackend(), builtin_profiles())
+    assert len(c.gains("Rock")) == 10 and c.gains("Nope") == ()

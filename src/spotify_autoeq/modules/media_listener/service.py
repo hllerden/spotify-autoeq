@@ -124,6 +124,7 @@ class PlayerctlListener:
         sink: EventSink,
         *,
         idle_sink: Optional[Callable[[], None]] = None,
+        status_sink: Optional[EventSink] = None,
         player: str = "spotify",
         playerctl: str = "playerctl",
         process_factory: Optional[ProcessFactory] = None,
@@ -136,6 +137,7 @@ class PlayerctlListener:
             raise ValueError("backoff must satisfy 0 < initial <= max")
         self._sink = sink
         self._idle_sink = idle_sink
+        self._status_sink = status_sink
         self._argv = build_command(playerctl, player)
         self._factory: ProcessFactory = process_factory or _default_process_factory
         self._initial_backoff = initial_backoff_s
@@ -147,6 +149,7 @@ class PlayerctlListener:
         self._process: Optional[ManagedProcess] = None
         self._thread: Optional[threading.Thread] = None
         self._last_identity: Optional[tuple[str, str, str]] = None
+        self._last_status = ""
 
     @property
     def argv(self) -> list[str]:
@@ -238,18 +241,29 @@ class PlayerctlListener:
             return
         if event.identity == self._last_identity:
             _LOG.debug("same track (%s), status %s", event.trackid, event.status)
+            if event.status != self._last_status:
+                self._last_status = event.status
+                self._call_sink(self._status_sink, event, "status sink")
             return
         self._last_identity = event.identity
+        self._last_status = event.status
+        self._call_sink(self._sink, event, "track event sink")
+
+    @staticmethod
+    def _call_sink(sink: Optional[EventSink], event: TrackEvent, name: str) -> None:
+        if sink is None:
+            return
         try:
-            self._sink(event)
+            sink(event)
         except Exception:  # noqa: BLE001 - the listener must survive sink bugs
-            _LOG.exception("track event sink failed")
+            _LOG.exception("%s failed", name)
 
     def _notify_idle(self) -> None:
         """Report the transition from "had a track" to "no track / player gone"."""
         if self._last_identity is None:
             return
         self._last_identity = None
+        self._last_status = ""
         _LOG.debug("player has no track or disappeared")
         if self._idle_sink is None:
             return

@@ -208,3 +208,31 @@ def test_idle_sink_not_called_without_prior_track():
     time.sleep(0.2)
     lis.stop()
     assert idle == []
+
+
+def test_status_sink_gets_pause_and_resume_but_not_new_events():
+    events, statuses = [], []
+    lines = [line(TRACK, status="Playing"), line(TRACK, status="Paused"),
+             line(TRACK, status="Paused"), line(TRACK, status="Playing")]
+    lis = PlayerctlListener(events.append, status_sink=lambda e: statuses.append(e.status),
+                            process_factory=lambda a: FakeProc(lines),
+                            initial_backoff_s=5, max_backoff_s=5)
+    lis.start()
+    assert wait_for(lambda: len(statuses) == 2)
+    lis.stop()
+    assert statuses == ["Paused", "Playing"] and len(events) == 1
+
+
+def test_failing_status_sink_does_not_stop_the_listener():
+    events = []
+
+    def bad(_):
+        raise RuntimeError("x")
+
+    lines = [line(TRACK), line(TRACK, status="Paused"), line("/com/spotify/track/b")]
+    lis = PlayerctlListener(events.append, status_sink=bad,
+                            process_factory=lambda a: FakeProc(lines),
+                            initial_backoff_s=5, max_backoff_s=5)
+    lis.start()
+    assert wait_for(lambda: len(events) == 2)
+    lis.stop()
