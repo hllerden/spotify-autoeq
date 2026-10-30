@@ -1,0 +1,15 @@
+2026-10-30 08:13:00,044 INFO spotify_autoeq.apps.autoeq.cli: spotify-autoeq started (player=spotify)
+2026-10-30 08:13:01,786 INFO spotify_autoeq.modules.genre_resolver.service: Placebo -> alternative rock, indie rock, rock, pop rock via musicbrainz
+2026-10-30 08:13:01,802 INFO spotify_autoeq.apps.autoeq.daemon: Placebo - This Picture | genres=['alternative rock', 'indie rock', 'rock', 'pop rock'] | profile=Rock
+2026-10-30 08:13:01,811 INFO spotify_autoeq.modules.eq_controller.pulseeffects: started pulseeffects service
+2026-10-30 08:13:06,411 INFO spotify_autoeq.modules.eq_controller.service: equalizer profile -> Rock
+2026-10-30 08:13:52,283 INFO spotify_autoeq.modules.genre_resolver.service: Madonna -> Pop, Dance via itunes
+2026-10-30 08:13:52,301 INFO spotify_autoeq.apps.autoeq.daemon: Madonna - Hung Up | genres=['Pop', 'Dance'] | profile=Pop
+2026-10-30 08:13:52,341 INFO spotify_autoeq.modules.eq_controller.service: equalizer profile -> Pop
+2026-10-30 08:14:06,243 INFO spotify_autoeq.modules.genre_resolver.service: RAYE -> pop, dance, dance-pop, r&b, contemporary r&b via musicbrainz
+2026-10-30 08:14:06,261 INFO spotify_autoeq.apps.autoeq.daemon: RAYE - Escapism. | genres=['pop', 'dance', 'dance-pop', 'r&b', 'contemporary r&b'] | profile=Pop
+2026-10-30 08:14:06,311 INFO spotify_autoeq.modules.eq_controller.service: equalizer profile -> Pop
+2026-10-30 08:14:28,157 INFO spotify_autoeq.modules.genre_resolver.service: Guns N' Roses -> hard rock, glam metal, heavy metal, rock, art rock via musicbrainz
+2026-10-30 08:14:28,176 INFO spotify_autoeq.apps.autoeq.daemon: Guns N' Roses - Knockin' On Heaven's Door | genres=['hard rock', 'glam metal', 'heavy metal', 'rock', 'art rock'] | profile=Rock
+2026-10-30 08:14:28,224 INFO spotify_autoeq.modules.eq_controller.service: equalizer profile -> Rock
+2026-10-30 08:14:46,618 INFO spotify_autoeq.apps.autoeq.cli: shutting down
