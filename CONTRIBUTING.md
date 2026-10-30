@@ -29,3 +29,22 @@ The tests need no network and never touch your audio setup. They do need the
 - Use conventional commit messages (`feat:`, `fix:`, `docs:`, `test:`, ...).
 - Genre keywords live in `src/spotify_autoeq/modules/preset_mapper/genre_map.yaml`;
   improving them is a good first contribution.
+
+## Releasing
+
+Releases are published to PyPI from a branch, never from a tag, so tags can be
+created freely during development.
+
+1. Set the new version in `src/spotify_autoeq/__init__.py` and describe it in
+   `CHANGELOG.md`; merge to `main` and wait for CI.
+2. Create and push the release branch, named after the version:
+
+   ```
+   git switch -c release/v1.0.1
+   git push origin release/v1.0.1
+   ```
+
+3. The `Release` workflow checks that the branch name matches the package
+   version, builds, and publishes. A version can be uploaded to PyPI only once.
+
+The GitHub environment `pypi` is restricted to the branch pattern `release/*`.
