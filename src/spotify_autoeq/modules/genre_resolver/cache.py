@@ -17,6 +17,8 @@ _DAY = 86400.0
 class CacheEntry:
     genres: tuple[str, ...]
     """Empty tuple is a cached negative result."""
+    source: str = ""
+    """Name of the provider that supplied the genres; empty for older entries."""
 
     @property
     def negative(self) -> bool:
@@ -39,25 +41,30 @@ class GenreCache:
         with self._lock, self._db:
             self._db.execute(
                 "CREATE TABLE IF NOT EXISTS genres ("
-                "artist TEXT PRIMARY KEY, genres TEXT NOT NULL, stored_at REAL NOT NULL)")
+                "artist TEXT PRIMARY KEY, genres TEXT NOT NULL, stored_at REAL NOT NULL, "
+                "source TEXT NOT NULL DEFAULT '')")
+            columns = {row[1] for row in self._db.execute("PRAGMA table_info(genres)")}
+            if "source" not in columns:  # database written by version 1.0
+                self._db.execute("ALTER TABLE genres ADD COLUMN source TEXT NOT NULL DEFAULT ''")
 
     def get(self, key: str) -> Optional[CacheEntry]:
         with self._lock:
             row = self._db.execute(
-                "SELECT genres, stored_at FROM genres WHERE artist = ?", (key,)).fetchone()
+                "SELECT genres, stored_at, source FROM genres WHERE artist = ?", (key,)).fetchone()
         if row is None:
             return None
         genres = tuple(g for g in row[0].split(_SEPARATOR) if g)
         ttl = self._pos if genres else self._neg
         if self._clock() - row[1] >= ttl:
             return None
-        return CacheEntry(genres)
+        return CacheEntry(genres, row[2])
 
-    def put(self, key: str, genres: "tuple[str, ...]") -> None:
+    def put(self, key: str, genres: "tuple[str, ...]", source: str = "") -> None:
         with self._lock, self._db:
             self._db.execute(
-                "INSERT OR REPLACE INTO genres(artist, genres, stored_at) VALUES (?, ?, ?)",
-                (key, _SEPARATOR.join(genres), self._clock()))
+                "INSERT OR REPLACE INTO genres(artist, genres, stored_at, source) "
+                "VALUES (?, ?, ?, ?)",
+                (key, _SEPARATOR.join(genres), self._clock(), source))
 
     def purge_expired(self) -> int:
         now = self._clock()

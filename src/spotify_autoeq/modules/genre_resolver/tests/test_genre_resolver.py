@@ -1,4 +1,5 @@
 import json
+import time
 from pathlib import Path
 
 import pytest
@@ -196,3 +197,30 @@ def test_purge_expired():
     now[0] += 2 * 86400
     assert cache.purge_expired() == 1
     assert cache.get("pos") is not None
+
+
+def test_resolution_reports_source_and_cached_flag():
+    r, cache = make(Fake("first", None), Fake("second", ["Rock"]))
+    first = r.resolve_detailed("Oasis", "x")
+    assert (first.genres, first.source, first.cached) == (("Rock",), "second", False)
+    again = r.resolve_detailed("Oasis", "y")
+    assert (again.genres, again.source, again.cached) == (("Rock",), "second", True)
+    none = make(Fake("only", None))[0].resolve_detailed("Nobody", "x")
+    assert (none.genres, none.source) == ((), "none")
+    assert r.resolve_detailed("", "x").source == "none"
+
+
+def test_cache_migrates_a_version_1_database(tmp_path):
+    import sqlite3
+    path = tmp_path / "old.sqlite3"
+    db = sqlite3.connect(path)
+    db.execute("CREATE TABLE genres (artist TEXT PRIMARY KEY, genres TEXT NOT NULL, "
+               "stored_at REAL NOT NULL)")
+    db.execute("INSERT INTO genres VALUES ('oasis', 'rock', ?)", (time.time(),))
+    db.commit()
+    db.close()
+    cache = GenreCache(path)
+    entry = cache.get("oasis")
+    assert entry.genres == ("rock",) and entry.source == ""
+    cache.put("pixies", ("indie",), "itunes")
+    assert cache.get("pixies").source == "itunes"
