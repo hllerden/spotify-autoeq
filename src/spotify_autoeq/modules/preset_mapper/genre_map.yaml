@@ -1,0 +1,24 @@
+# Genre keyword -> equalizer profile. Matching is case/accent-insensitive.
+# An exact genre match wins; otherwise the longest keyword contained in the
+# genre decides ("anatolian rock" -> "rock" -> Rock).
+Rock:
+  [rock, alternative, alternatif, indie, grunge, punk, britpop, shoegaze, psychedelic,
+   anadolu, arabesk rock, blues rock, hard rock, garage, new wave, post-punk]
+Metal:
+  [metal, hardcore, thrash, doom, death, black metal, deathcore, metalcore]
+Pop:
+  [pop, synthpop, k-pop, j-pop, turkish pop, türk pop, turk pop, europop, dance pop, teen, disco, funk]
+Electronic:
+  [electronic, elektronik, techno, house, trance, edm, electro, dubstep, drum and bass,
+   dnb, ambient, synthwave, idm, downtempo, chillout, dance, breakbeat]
+HipHop:
+  [hip hop, hip-hop, hiphop, rap, trap, drill, grime, türkçe rap, turkce rap, boom bap]
+RnB:
+  [r&b, rnb, soul, neo soul, rhythm and blues, motown, urban, reggae, dancehall, afrobeat]
+Jazz:
+  [jazz, swing, bebop, bossa nova, big band, fusion, lounge]
+Classical:
+  [classical, klasik, orchestra, orkestra, opera, baroque, symphony, chamber, piano, soundtrack, score]
+Acoustic:
+  [acoustic, akustik, folk, singer-songwriter, country, bluegrass, türkü, turku, halk, fasıl,
+   sanat müziği, türk sanat, turk sanat, arabesk, ballad, oldies, latin, flamenco, world]
