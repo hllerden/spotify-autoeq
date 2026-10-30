@@ -1,12 +1,14 @@
 # spotify-autoeq
 
-[Türkçe README](README.tr.md)
+[![CI](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml/badge.svg)](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/hllerden/spotify-autoeq/blob/main/LICENSE)
+
+[Türkçe README](https://github.com/hllerden/spotify-autoeq/blob/main/README.tr.md)
 
 Automatically switches your Linux equalizer to match the genre of the song
 playing in Spotify. Rock gets more bass and sparkle, podcasts get clearer
 voices, and everything returns to flat when Spotify closes.
 
-![spotify-autoeq running in a terminal](docs/assets/demo.gif)
+![spotify-autoeq running in a terminal](https://raw.githubusercontent.com/hllerden/spotify-autoeq/main/docs/assets/demo.gif)
 
 Version 1.0.0. Linux, PulseAudio, PulseEffects 4.8.
 
@@ -46,7 +48,7 @@ Behaviour you can rely on:
 
 ## Profiles
 
-![Equalizer profiles](docs/assets/profiles.svg)
+![Equalizer profiles](https://raw.githubusercontent.com/hllerden/spotify-autoeq/main/docs/assets/profiles.svg)
 
 Flat, Rock, Metal, Pop, Electronic, HipHop, RnB, Jazz, Classical, Acoustic and
 Podcast. The curves are intentionally moderate; they are tuned for Bluetooth
@@ -99,7 +101,7 @@ python3 -m venv --system-site-packages ~/.local/share/spotify-autoeq
 ### From a source checkout
 
 ```
-git clone <repository-url> spotify-autoeq
+git clone https://github.com/hllerden/spotify-autoeq.git spotify-autoeq
 cd spotify-autoeq
 packaging/install.sh cli        # or: packaging/install.sh service
 ```
@@ -174,7 +176,7 @@ configuration without a restart; `SIGTERM` or `Ctrl+C` shuts down cleanly.
 
 Optional file: `~/.config/spotify-autoeq/config.yaml`
 (`spotify-autoeq config init` writes
-[a commented example](src/spotify_autoeq/apps/autoeq/data/config.example.yaml) with every key).
+[a commented example](https://github.com/hllerden/spotify-autoeq/blob/main/src/spotify_autoeq/apps/autoeq/data/config.example.yaml) with every key).
 
 | Key | Default | Meaning |
 |---|---|---|
@@ -255,4 +257,4 @@ packaging/                  installer for source checkouts
 
 ## License
 
-MIT, see [LICENSE](LICENSE). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
+MIT, see [LICENSE](https://github.com/hllerden/spotify-autoeq/blob/main/LICENSE). Changes are listed in [CHANGELOG.md](https://github.com/hllerden/spotify-autoeq/blob/main/CHANGELOG.md).

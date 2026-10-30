@@ -1,12 +1,14 @@
 # spotify-autoeq
 
-[English README](README.md)
+[![CI](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml/badge.svg)](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/hllerden/spotify-autoeq/blob/main/LICENSE)
+
+[English README](https://github.com/hllerden/spotify-autoeq/blob/main/README.md)
 
 Spotify'da çalan şarkının türüne göre Linux ekolayzırınızı otomatik değiştirir.
 Rock'ta bas ve tiz artar, podcast'te ses netleşir, Spotify kapanınca her şey
 düz (Flat) profile döner.
 
-![spotify-autoeq terminalde çalışırken](docs/assets/demo.gif)
+![spotify-autoeq terminalde çalışırken](https://raw.githubusercontent.com/hllerden/spotify-autoeq/main/docs/assets/demo.gif)
 
 Sürüm 1.0.0. Linux, PulseAudio, PulseEffects 4.8.
 
@@ -47,7 +49,7 @@ Güvenebileceğiniz davranışlar:
 
 ## Profiller
 
-![Ekolayzır profilleri](docs/assets/profiles.svg)
+![Ekolayzır profilleri](https://raw.githubusercontent.com/hllerden/spotify-autoeq/main/docs/assets/profiles.svg)
 
 Flat, Rock, Metal, Pop, Electronic, HipHop, RnB, Jazz, Classical, Acoustic ve
 Podcast. Eğriler bilerek ölçülü tutuldu; büyük yükseltmelerin yalnızca bozulma
@@ -100,7 +102,7 @@ python3 -m venv --system-site-packages ~/.local/share/spotify-autoeq
 ### Kaynak klasöründen
 
 ```
-git clone <depo-adresi> spotify-autoeq
+git clone https://github.com/hllerden/spotify-autoeq.git spotify-autoeq
 cd spotify-autoeq
 packaging/install.sh cli        # veya: packaging/install.sh service
 ```
@@ -176,7 +178,7 @@ ayarı yeniden başlatmadan yükler; `SIGTERM` veya `Ctrl+C` temiz kapatır.
 
 İsteğe bağlı dosya: `~/.config/spotify-autoeq/config.yaml`
 (`spotify-autoeq config init`, tüm anahtarları içeren
-[açıklamalı bir örnek](src/spotify_autoeq/apps/autoeq/data/config.example.yaml) yazar).
+[açıklamalı bir örnek](https://github.com/hllerden/spotify-autoeq/blob/main/src/spotify_autoeq/apps/autoeq/data/config.example.yaml) yazar).
 
 | Anahtar | Varsayılan | Anlamı |
 |---|---|---|
@@ -258,5 +260,5 @@ packaging/                  kaynak klasörü için kurucu
 
 ## Lisans
 
-MIT, bkz. [LICENSE](LICENSE). Değişiklikler [CHANGELOG.md](CHANGELOG.md)
+MIT, bkz. [LICENSE](https://github.com/hllerden/spotify-autoeq/blob/main/LICENSE). Değişiklikler [CHANGELOG.md](https://github.com/hllerden/spotify-autoeq/blob/main/CHANGELOG.md)
 dosyasındadır.

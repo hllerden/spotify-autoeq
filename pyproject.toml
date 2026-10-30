@@ -26,6 +26,12 @@ classifiers = [
 ]
 dependencies = ["PyYAML>=5.4"]
 
+[project.urls]
+Homepage = "https://github.com/hllerden/spotify-autoeq"
+Repository = "https://github.com/hllerden/spotify-autoeq"
+Issues = "https://github.com/hllerden/spotify-autoeq/issues"
+Changelog = "https://github.com/hllerden/spotify-autoeq/blob/main/CHANGELOG.md"
+
 [project.optional-dependencies]
 test = ["pytest>=7"]
 
