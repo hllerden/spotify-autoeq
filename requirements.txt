@@ -1,0 +1,7 @@
+# Runtime
+PyYAML>=5.4
+# PyGObject (gi) comes from the system package python3-gi; create the
+# virtual environment with --system-site-packages so it is not built from source.
+
+# Test
+pytest>=7

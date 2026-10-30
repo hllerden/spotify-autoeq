@@ -1,0 +1,7 @@
+include LICENSE README.md README.tr.md CHANGELOG.md
+recursive-include src/spotify_autoeq *.yaml *.service py.typed
+recursive-include src/spotify_autoeq/modules/genre_resolver/tests/fixtures *.json
+recursive-include src *.py
+graft tests
+graft docs
+global-exclude __pycache__ *.py[cod]
