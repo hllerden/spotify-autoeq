@@ -1,0 +1,27 @@
+# spotify-autoeq example configuration.
+# Copy to ~/.config/spotify-autoeq/config.yaml and adjust. Every key is optional.
+
+player: spotify            # MPRIS player name followed by playerctl
+debounce_s: 1.5            # wait after a track change before resolving
+
+logging:
+  level: INFO              # DEBUG | INFO | WARNING | ERROR | CRITICAL
+  journal: true            # true: plain lines for journald; false: with timestamps
+
+resolver:
+  http_timeout_s: 4.0
+  providers: [musicbrainz, itunes, deezer]   # add lastfm after setting its key
+  cache_path: ~/.cache/spotify-autoeq/genres.sqlite3
+  positive_ttl_days: 30
+  negative_ttl_days: 1
+  user_agent: "spotify-autoeq/1.0 (contact: you@example.com)"
+  lastfm_api_key: ""       # required only when "lastfm" is in providers
+
+mapper:
+  default_profile: Flat
+  podcast_profile: Podcast
+  overrides: {}            # "artist - title" or artist -> profile name
+
+eq:
+  backend: pulseeffects
+  preset_dir: ~/.config/PulseEffects/output
