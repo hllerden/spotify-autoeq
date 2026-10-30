@@ -1,8 +1,8 @@
 # spotify-autoeq
 
-[![CI](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml/badge.svg)](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/hllerden/spotify-autoeq/blob/main/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/spotify-autoeq.svg)](https://pypi.org/project/spotify-autoeq/) [![CI](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml/badge.svg)](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/hllerden/spotify-autoeq/blob/main/LICENSE)
 
-[Türkçe README](https://github.com/hllerden/spotify-autoeq/blob/main/README.tr.md)
+[PyPI](https://pypi.org/project/spotify-autoeq/) | [Türkçe README](https://github.com/hllerden/spotify-autoeq/blob/main/README.tr.md)
 
 Automatically switches your Linux equalizer to match the genre of the song
 playing in Spotify. Rock gets more bass and sparkle, podcasts get clearer

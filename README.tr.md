@@ -1,8 +1,8 @@
 # spotify-autoeq
 
-[![CI](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml/badge.svg)](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/hllerden/spotify-autoeq/blob/main/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/spotify-autoeq.svg)](https://pypi.org/project/spotify-autoeq/) [![CI](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml/badge.svg)](https://github.com/hllerden/spotify-autoeq/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/hllerden/spotify-autoeq/blob/main/LICENSE)
 
-[English README](https://github.com/hllerden/spotify-autoeq/blob/main/README.md)
+[PyPI](https://pypi.org/project/spotify-autoeq/) | [English README](https://github.com/hllerden/spotify-autoeq/blob/main/README.md)
 
 Spotify'da çalan şarkının türüne göre Linux ekolayzırınızı otomatik değiştirir.
 Rock'ta bas ve tiz artar, podcast'te ses netleşir, Spotify kapanınca her şey
