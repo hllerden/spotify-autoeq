@@ -2,6 +2,7 @@ import threading
 import time
 
 from spotify_autoeq.apps.autoeq.daemon import AutoEqDaemon
+from spotify_autoeq.modules.genre_resolver import Resolution
 from spotify_autoeq.modules.media_listener import TrackEvent, TrackKind
 from spotify_autoeq.modules.preset_mapper import PresetMapper, load_genre_map
 
@@ -15,21 +16,28 @@ class Resolver:
     def __init__(self, genres=None, gate=None):
         self.calls, self.genres, self.gate = [], genres or {}, gate
 
-    def resolve(self, artist, title):
+    def resolve_detailed(self, artist, title):
         self.calls.append(artist)
         if self.gate and artist in self.gate:
             self.gate[artist].wait(5)
-        return self.genres.get(artist, ())
+        genres = tuple(self.genres.get(artist, ()))
+        return Resolution(genres, "musicbrainz" if genres else "none", False)
 
 
 class Controller:
     def __init__(self):
         self.profiles, self.changed = [], threading.Event()
+        self.last_error = None
+        self.active_profile = None
 
     def set_profile(self, name):
         self.profiles.append(name)
+        self.active_profile = name
         self.changed.set()
         return True
+
+    def gains(self, name):
+        return (1.0,) * 10
 
 
 def make(resolver, debounce=0.05):
@@ -122,10 +130,10 @@ def test_episode_gets_podcast_profile_immediately_without_lookup():
 
 def test_resolver_exception_does_not_kill_worker():
     class Boom(Resolver):
-        def resolve(self, artist, title):
+        def resolve_detailed(self, artist, title):
             if artist == "artist1":
                 raise RuntimeError("x")
-            return ["rock"]
+            return Resolution(("rock",), "itunes", False)
 
     d, c = make(Boom())
     d.on_event(ev(1))

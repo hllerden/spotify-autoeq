@@ -52,6 +52,13 @@ class EqConfig:
 
 
 @dataclass(frozen=True)
+class StatusConfig:
+    enabled: bool = True
+    path: Optional[Path] = None
+    """``None`` selects ``$XDG_RUNTIME_DIR/spotify-autoeq/status.json``."""
+
+
+@dataclass(frozen=True)
 class Config:
     player: str = "spotify"
     debounce_s: float = 1.5
@@ -59,6 +66,7 @@ class Config:
     resolver: ResolverConfig = field(default_factory=ResolverConfig)
     mapper: MapperConfig = field(default_factory=MapperConfig)
     eq: EqConfig = field(default_factory=EqConfig)
+    status: StatusConfig = field(default_factory=StatusConfig)
 
 
 def default_config_path() -> Path:
@@ -186,13 +194,22 @@ def _parse_eq(raw: Mapping[str, Any]) -> EqConfig:
                     preset_dir=_path("eq.preset_dir", raw.get("preset_dir", str(d.preset_dir))))
 
 
+def _parse_status(raw: Mapping[str, Any]) -> StatusConfig:
+    _reject_unknown("status", raw, ("enabled", "path"))
+    enabled = raw.get("enabled", True)
+    if not isinstance(enabled, bool):
+        raise ConfigError("'status.enabled' must be a boolean")
+    path = raw.get("path")
+    return StatusConfig(enabled=enabled, path=None if path is None else _path("status.path", path))
+
+
 def parse_config(raw: Optional[Mapping[str, Any]]) -> Config:
     """Validate a decoded YAML mapping and return an immutable :class:`Config`."""
     if raw is None:
         raw = {}
     if not isinstance(raw, Mapping):
         raise ConfigError("top level of the configuration must be a mapping")
-    _reject_unknown("", raw, ("player", "debounce_s", "logging", "resolver", "mapper", "eq"))
+    _reject_unknown("", raw, ("player", "debounce_s", "logging", "resolver", "mapper", "eq", "status"))
     d = Config()
     return Config(
         player=_text("player", raw.get("player", d.player)),
@@ -201,6 +218,7 @@ def parse_config(raw: Optional[Mapping[str, Any]]) -> Config:
         resolver=_parse_resolver(_section(raw, "resolver")),
         mapper=_parse_mapper(_section(raw, "mapper")),
         eq=_parse_eq(_section(raw, "eq")),
+        status=_parse_status(_section(raw, "status")),
     )
 
 

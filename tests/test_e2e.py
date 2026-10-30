@@ -46,8 +46,10 @@ def env(tmp_path):
     (tmp_path / "c.yaml").write_text(
         f"debounce_s: 0.05\nlogging: {{level: DEBUG}}\n"
         f"resolver: {{cache_path: {tmp_path / 'g.sqlite3'}}}\n")
+    runtime = tmp_path / "run"
+    runtime.mkdir()
     e = dict(os.environ, PATH=f"{bin_dir}:{os.environ['PATH']}", GSETTINGS_BACKEND="memory",
-             PYTHONPATH=str(ROOT / "src"))
+             PYTHONPATH=str(ROOT / "src"), XDG_RUNTIME_DIR=str(runtime))
     return tmp_path, bin_dir, e
 
 
@@ -130,3 +132,30 @@ def test_spotify_closing_returns_to_flat(env):
     assert code == 0
     assert "equalizer profile -> Rock" in err
     assert "no track playing -> Flat" in err and "equalizer profile -> Flat" in err
+
+
+def test_status_file_follows_pause_and_shutdown(env):
+    import json
+    tmp, bin_dir, e = env
+    status_file = tmp / "run" / "spotify-autoeq" / "status.json"
+    script(bin_dir / "playerctl",
+           track(1, "Oasis") + "sleep 1.2\n" + track(1, "Oasis", "Paused") + "exec sleep 60\n")
+    proc = subprocess.Popen(
+        [sys.executable, "-m", "spotify_autoeq.apps.autoeq", "-c", str(tmp / "c.yaml"), "run"],
+        env=e, stderr=subprocess.PIPE, text=True)
+    deadline = time.monotonic() + 8
+    seen = None
+    while time.monotonic() < deadline:
+        if status_file.exists():
+            doc = json.loads(status_file.read_text())
+            if doc["profile"]["name"] == "Rock" and doc["playback"] == "paused":
+                seen = doc
+                break
+        time.sleep(0.1)
+    assert seen is not None, "status file never showed a paused Rock track"
+    assert seen["genres"][0] == "britpop"
+    assert seen["genre_source"] == "cache" and seen["genre_cached"] is True
+    assert seen["daemon"]["pid"] == proc.pid
+    proc.send_signal(signal.SIGTERM)
+    proc.communicate(timeout=10)
+    assert json.loads(status_file.read_text())["daemon"]["state"] == "stopped"

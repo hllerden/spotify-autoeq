@@ -10,11 +10,19 @@ from typing import Callable, Optional, Protocol, Sequence
 
 from spotify_autoeq.modules.media_listener import TrackEvent, TrackKind
 
+from .status import NullStatus
+
 _LOG = logging.getLogger(__name__)
 
 
+class Resolution(Protocol):
+    genres: Sequence[str]
+    source: str
+    cached: bool
+
+
 class Resolver(Protocol):
-    def resolve(self, artist: str, title: str) -> Sequence[str]: ...
+    def resolve_detailed(self, artist: str, title: str) -> Resolution: ...
 
 
 class Mapper(Protocol):
@@ -25,7 +33,11 @@ class Mapper(Protocol):
 
 
 class Controller(Protocol):
+    last_error: Optional[str]
+    active_profile: Optional[str]
+
     def set_profile(self, name: str) -> bool: ...
+    def gains(self, name: str) -> Sequence[float]: ...
 
 
 @dataclass
@@ -44,11 +56,12 @@ class AutoEqDaemon:
     applied. Events inside the debounce window replace each other."""
 
     def __init__(self, resolver: Resolver, mapper: Mapper, controller: Controller,
-                 *, debounce_s: float = 1.5,
+                 *, debounce_s: float = 1.5, status: Optional[NullStatus] = None,
                  clock: Callable[[], float] = time.monotonic) -> None:
         self._resolver = resolver
         self._mapper = mapper
         self._controller = controller
+        self._status = status or NullStatus()
         self._debounce = debounce_s
         self._clock = clock
         self._cond = threading.Condition()
@@ -78,6 +91,7 @@ class AutoEqDaemon:
             self._generation += 1
             self._pending = None
             self._cond.notify_all()
+        self._status.stop()
         thread = self._thread
         if thread is not None:
             thread.join(timeout)
@@ -89,6 +103,7 @@ class AutoEqDaemon:
         with self._cond:
             self._generation += 1
             generation = self._generation
+            self._status.set_track(event)
             if event.kind is TrackKind.AD:
                 _LOG.info("advertisement; equalizer left untouched")
                 self._pending = None
@@ -96,6 +111,7 @@ class AutoEqDaemon:
             if event.kind is TrackKind.EPISODE:
                 self._pending = None
                 profile = self._mapper.podcast_profile
+                self._status.set_resolution((), "none", False)
                 _LOG.info("episode %s -> %s", event.display, profile)
             else:
                 profile = None
@@ -105,6 +121,10 @@ class AutoEqDaemon:
         if profile is not None:
             self._apply_if_current(generation, profile)
 
+    def on_status(self, event: TrackEvent) -> None:
+        """Pause/resume of the same track: only the status file changes."""
+        self._status.set_playback(event.status)
+
     def on_idle(self) -> None:
         """Player closed or stopped: cancel pending work and return to the default."""
         with self._cond:
@@ -112,6 +132,7 @@ class AutoEqDaemon:
             generation = self._generation
             self._pending = None
             profile = self._mapper.default_profile
+            self._status.set_idle()
         _LOG.info("no track playing -> %s", profile)
         self._apply_if_current(generation, profile)
 
@@ -139,9 +160,12 @@ class AutoEqDaemon:
 
     def _process(self, pending: _Pending) -> None:
         event = pending.event
-        genres = list(self._resolver.resolve(event.artist, event.title))
+        resolution = self._resolver.resolve_detailed(event.artist, event.title)
+        genres = list(resolution.genres)
         with self._cond:
             mapper = self._mapper
+            if pending.generation == self._generation:
+                self._status.set_resolution(genres, resolution.source, resolution.cached)
         profile = mapper.profile_for(event.artist, event.title, genres)
         _LOG.info("%s | genres=%s | profile=%s", event.display,
                   ", ".join(genres) or "-", profile)
@@ -153,3 +177,8 @@ class AutoEqDaemon:
                 _LOG.info("dropping stale result (profile %s)", profile)
                 return
         self._controller.set_profile(profile)
+        error = self._controller.last_error
+        applied = self._controller.active_profile or profile
+        if error is None:
+            self._status.set_profile(applied, self._controller.gains(applied))
+        self._status.set_backend(error)

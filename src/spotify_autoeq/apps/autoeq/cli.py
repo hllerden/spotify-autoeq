@@ -21,6 +21,7 @@ from .config import Config, ConfigError, default_config_path, load_config
 from .daemon import AutoEqDaemon
 from .log import configure_logging
 from .runtime import build_cache, build_controller, build_mapper, build_resolver
+from .status import NullStatus, StatusPublisher, default_status_path
 
 _LOG = logging.getLogger(__name__)
 
@@ -99,9 +100,14 @@ def cmd_run(config: Config, config_path: Optional[Path]) -> int:
     cache = build_cache(config)
     mapper = build_mapper(config)
     controller = build_controller(config, mapper)
+    status: NullStatus = NullStatus()
+    if config.status.enabled:
+        status = StatusPublisher(config.status.path or default_status_path(),
+                                 version=__version__)
     daemon = AutoEqDaemon(build_resolver(config, cache), mapper, controller,
-                          debounce_s=config.debounce_s)
-    listener = PlayerctlListener(daemon.on_event, idle_sink=daemon.on_idle, player=config.player)
+                          debounce_s=config.debounce_s, status=status)
+    listener = PlayerctlListener(daemon.on_event, idle_sink=daemon.on_idle,
+                                 status_sink=daemon.on_status, player=config.player)
     stop = threading.Event()
     reload_request = threading.Event()
 

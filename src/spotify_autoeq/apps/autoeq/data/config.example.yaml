@@ -25,3 +25,7 @@ mapper:
 eq:
   backend: pulseeffects
   preset_dir: ~/.config/PulseEffects/output
+
+status:
+  enabled: true            # write the status file read by panel indicators
+  path: null               # default: $XDG_RUNTIME_DIR/spotify-autoeq/status.json
